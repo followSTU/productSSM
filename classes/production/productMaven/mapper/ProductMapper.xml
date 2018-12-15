@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xyn.maven.dao.ProductMapper">
+  <resultMap id="BaseResultMap" type="com.xyn.maven.entities.Product">
+    <id column="Product_Id" jdbcType="INTEGER" property="productId" />
+    <result column="Name" jdbcType="VARCHAR" property="name" />
+    <result column="Price" jdbcType="DOUBLE" property="price" />
+    <result column="Xiao_Liang" jdbcType="INTEGER" property="xiaoLiang" />
+    <result column="Hot" jdbcType="INTEGER" property="hot" />
+    <result column="Ku_Cun" jdbcType="INTEGER" property="kuCun" />
+    <result column="Time_Sale" jdbcType="TIMESTAMP" property="timeSale" />
+    <result column="Time_Sheng_Chan" jdbcType="TIMESTAMP" property="timeShengChan" />
+    <result column="Type_Id" jdbcType="INTEGER" property="typeId" />
+  </resultMap>
+  <resultMap id="ProductResultMap" type="com.xyn.maven.entities.Product">
+    <id column="Product_Id" jdbcType="INTEGER" property="productId" />
+    <result column="Name" jdbcType="VARCHAR" property="name" />
+    <result column="Price" jdbcType="DOUBLE" property="price" />
+    <result column="Xiao_Liang" jdbcType="INTEGER" property="xiaoLiang" />
+    <result column="Hot" jdbcType="INTEGER" property="hot" />
+    <result column="Ku_Cun" jdbcType="INTEGER" property="kuCun" />
+    <result column="Time_Sale" jdbcType="TIMESTAMP" property="timeSale" />
+    <result column="Time_Sheng_Chan" jdbcType="TIMESTAMP" property="timeShengChan" />
+    <result column="Type_Id" jdbcType="INTEGER" property="typeId" />
+    <association property="type" javaType="com.xyn.maven.entities.Type">
+    	<id column="Type_Id" property="typeId"></id>
+    	<result column="Type_Name" property="typeName"></result>
+    </association>
+  </resultMap>
+ 
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    Product_Id, Name, Price, Xiao_Liang, Hot, Ku_Cun, Time_Sale, Time_Sheng_Chan, Type_Id
+  </sql>
+  <!-- 查询带类型的所有商品 -->
+  <select id="selectAllProduct" parameterType="com.xyn.maven.entities.ProductExample" resultMap="ProductResultMap">
+    select
+  	a.Product_Id,a.Name,a.Price,a.Xiao_Liang,a.Hot,a.Ku_Cun,a.Time_Sale,a.Time_Sheng_Chan,a.Type_Id,
+	b.Type_Id,b.Type_Name
+    from ssm_product a LEFT OUTER JOIN ssm_type b on a.Type_Id=b.Type_Id  
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.xyn.maven.entities.ProductExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ssm_product
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ssm_product
+    where Product_Id = #{productId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ssm_product
+    where Product_Id = #{productId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.xyn.maven.entities.ProductExample">
+    delete from ssm_product
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.xyn.maven.entities.Product">
+    insert into ssm_product (Product_Id, Name, Price, 
+      Xiao_Liang, Hot, Ku_Cun, 
+      Time_Sale, Time_Sheng_Chan, Type_Id
+      )
+    values (#{productId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, 
+      #{xiaoLiang,jdbcType=INTEGER}, #{hot,jdbcType=INTEGER}, #{kuCun,jdbcType=INTEGER}, 
+      #{timeSale,jdbcType=TIMESTAMP}, #{timeShengChan,jdbcType=TIMESTAMP}, #{typeId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xyn.maven.entities.Product">
+    insert into ssm_product
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="productId != null">
+        Product_Id,
+      </if>
+      <if test="name != null">
+        Name,
+      </if>
+      <if test="price != null">
+        Price,
+      </if>
+      <if test="xiaoLiang != null">
+        Xiao_Liang,
+      </if>
+      <if test="hot != null">
+        Hot,
+      </if>
+      <if test="kuCun != null">
+        Ku_Cun,
+      </if>
+      <if test="timeSale != null">
+        Time_Sale,
+      </if>
+      <if test="timeShengChan != null">
+        Time_Sheng_Chan,
+      </if>
+      <if test="typeId != null">
+        Type_Id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="productId != null">
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="xiaoLiang != null">
+        #{xiaoLiang,jdbcType=INTEGER},
+      </if>
+      <if test="hot != null">
+        #{hot,jdbcType=INTEGER},
+      </if>
+      <if test="kuCun != null">
+        #{kuCun,jdbcType=INTEGER},
+      </if>
+      <if test="timeSale != null">
+        #{timeSale,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timeShengChan != null">
+        #{timeShengChan,jdbcType=TIMESTAMP},
+      </if>
+      <if test="typeId != null">
+        #{typeId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.xyn.maven.entities.ProductExample" resultType="java.lang.Long">
+    select count(*) from ssm_product
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ssm_product
+    <set>
+      <if test="record.productId != null">
+        Product_Id = #{record.productId,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null">
+        Name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.price != null">
+        Price = #{record.price,jdbcType=DOUBLE},
+      </if>
+      <if test="record.xiaoLiang != null">
+        Xiao_Liang = #{record.xiaoLiang,jdbcType=INTEGER},
+      </if>
+      <if test="record.hot != null">
+        Hot = #{record.hot,jdbcType=INTEGER},
+      </if>
+      <if test="record.kuCun != null">
+        Ku_Cun = #{record.kuCun,jdbcType=INTEGER},
+      </if>
+      <if test="record.timeSale != null">
+        Time_Sale = #{record.timeSale,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.timeShengChan != null">
+        Time_Sheng_Chan = #{record.timeShengChan,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.typeId != null">
+        Type_Id = #{record.typeId,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ssm_product
+    set Product_Id = #{record.productId,jdbcType=INTEGER},
+      Name = #{record.name,jdbcType=VARCHAR},
+      Price = #{record.price,jdbcType=DOUBLE},
+      Xiao_Liang = #{record.xiaoLiang,jdbcType=INTEGER},
+      Hot = #{record.hot,jdbcType=INTEGER},
+      Ku_Cun = #{record.kuCun,jdbcType=INTEGER},
+      Time_Sale = #{record.timeSale,jdbcType=TIMESTAMP},
+      Time_Sheng_Chan = #{record.timeShengChan,jdbcType=TIMESTAMP},
+      Type_Id = #{record.typeId,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xyn.maven.entities.Product">
+    update ssm_product
+    <set>
+      <if test="name != null">
+        Name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        Price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="xiaoLiang != null">
+        Xiao_Liang = #{xiaoLiang,jdbcType=INTEGER},
+      </if>
+      <if test="hot != null">
+        Hot = #{hot,jdbcType=INTEGER},
+      </if>
+      <if test="kuCun != null">
+        Ku_Cun = #{kuCun,jdbcType=INTEGER},
+      </if>
+      <if test="timeSale != null">
+        Time_Sale = #{timeSale,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timeShengChan != null">
+        Time_Sheng_Chan = #{timeShengChan,jdbcType=TIMESTAMP},
+      </if>
+      <if test="typeId != null">
+        Type_Id = #{typeId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where Product_Id = #{productId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xyn.maven.entities.Product">
+    update ssm_product
+    set Name = #{name,jdbcType=VARCHAR},
+      Price = #{price,jdbcType=DOUBLE},
+      Xiao_Liang = #{xiaoLiang,jdbcType=INTEGER},
+      Hot = #{hot,jdbcType=INTEGER},
+      Ku_Cun = #{kuCun,jdbcType=INTEGER},
+      Time_Sale = #{timeSale,jdbcType=TIMESTAMP},
+      Time_Sheng_Chan = #{timeShengChan,jdbcType=TIMESTAMP},
+      Type_Id = #{typeId,jdbcType=INTEGER}
+    where Product_Id = #{productId,jdbcType=INTEGER}
+  </update>
+</mapper>
